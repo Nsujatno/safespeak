@@ -5,54 +5,59 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  Linking
+  Linking,
+  Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const resources = [
   {
     title: 'Emergency & Crisis Support',
+    icon: 'alert-circle-outline',
     items: [
       {
         name: 'National Domestic Violence Hotline',
         info: 'Call 1-800-799-7233 or text "START" to 88788',
-        url: 'https://www.thehotline.org/'
+        url: 'https://www.thehotline.org/',
       },
       {
         name: 'Crisis Text Line',
         info: 'Text HOME to 741741',
-        url: 'https://www.crisistextline.org/'
+        url: 'https://www.crisistextline.org/',
       },
     ],
   },
   {
     title: 'Mental Health & Counseling',
+    icon: 'account-heart-outline',
     items: [
       {
         name: 'BetterHelp',
         info: 'Online therapy with licensed professionals',
-        url: 'https://www.betterhelp.com/'
+        url: 'https://www.betterhelp.com/',
       },
       {
         name: 'Psychology Today',
         info: 'Find a therapist near you',
-        url: 'https://www.psychologytoday.com/'
+        url: 'https://www.psychologytoday.com/',
       },
     ],
   },
   {
     title: 'Legal & Advocacy Services',
+    icon: 'gavel',
     items: [
       {
-        name: 'RAINN (Rape, Abuse & Incest National Network)',
+        name: 'RAINN',
         info: 'Support for survivors of sexual violence',
-        url: 'https://www.rainn.org/'
+        url: 'https://www.rainn.org/',
       },
       {
         name: 'WomensLaw.org',
         info: 'Legal help tailored for survivors of abuse',
-        url: 'https://www.womenslaw.org/'
+        url: 'https://www.womenslaw.org/',
       },
     ],
   },
@@ -70,17 +75,24 @@ export default function ResourceScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
+        <Text style={styles.backButtonText}>← Back to Home</Text>
+      </TouchableOpacity>
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerTitle}>Support Resources</Text>
           <Text style={styles.headerSubtitle}>
-            You are not alone. Here are trusted resources that may be helpful for you or someone you know.
+            You are not alone. These trusted resources may help you or someone you know.
           </Text>
         </View>
 
         {resources.map((section) => (
           <View key={section.title} style={styles.resourceSection}>
-            <Text style={styles.sectionTitle}>{section.title}</Text>
+            <View style={styles.sectionHeader}>
+              <Icon name={section.icon} size={22} color="#5E35B1" style={styles.sectionIcon} />
+              <Text style={styles.sectionTitle}>{section.title}</Text>
+            </View>
             {section.items.map((item) => (
               <TouchableOpacity
                 key={item.name}
@@ -105,6 +117,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F9F5FF',
   },
+  backButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#5C6BC0',
+  },
   scrollContent: {
     padding: 20,
   },
@@ -112,37 +132,49 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 35,
     fontWeight: 'bold',
-    color: '#5C6BC0',
+    color: '#4A148C',
     marginBottom: 8,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#7986CB',
+    color: '#7E57C2',
     lineHeight: 22,
   },
   resourceSection: {
-    marginBottom: 30,
+    marginBottom: 24,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sectionIcon: {
+    marginRight: 8,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 25,
+    fontWeight: '700',
     color: '#5E35B1',
-    marginBottom: 12,
   },
   resourceCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 15,
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 16,
     borderWidth: 1,
     borderColor: '#D1C4E9',
-    marginBottom: 12,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    elevation: 3,
   },
   resourceName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#5E35B1',
+    color: '#4527A0',
     marginBottom: 4,
   },
   resourceInfo: {
