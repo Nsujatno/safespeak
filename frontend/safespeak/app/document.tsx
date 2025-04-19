@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 36,
     fontWeight: 'bold',
     color: '#5C6BC0',
     marginBottom: 8,
@@ -277,4 +277,3 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-
