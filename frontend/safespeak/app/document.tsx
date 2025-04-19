@@ -70,6 +70,7 @@ export default function DocumentIncidentScreen() {
           <TextInput
             style={styles.dateInput}
             placeholder="MM/DD/YYYY or approximate date"
+            placeholderTextColor="rgba(0, 0, 0, 0.5)"
             value={incidentDate}
             onChangeText={setIncidentDate}
           />
@@ -78,6 +79,7 @@ export default function DocumentIncidentScreen() {
           <TextInput
             style={styles.descriptionInput}
             placeholder="Tell us what happened while describing your relationship with the person, where it happened, and if it's the first time. Take your time."
+            placeholderTextColor="rgba(0, 0, 0, 0.5)"
             value={incidentDescription}
             onChangeText={setIncidentDescription}
             multiline
@@ -181,6 +183,7 @@ const styles = StyleSheet.create({
   helperText: {
     fontSize: 14,
     color: '#9575CD',
+
     marginBottom: 8,
     fontStyle: 'italic',
   },

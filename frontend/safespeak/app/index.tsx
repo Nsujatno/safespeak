@@ -10,8 +10,10 @@ import {
   Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Link, useRouter } from 'expo-router';
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen() {
+  const router = useRouter();
   const [activeFeature, setActiveFeature] = useState(null);
   
   const features = [
@@ -19,59 +21,49 @@ export default function HomeScreen({ navigation }) {
       id: 1,
       title: 'Document Incidents',
       description: 'Safely record and store interactions that made you uncomfortable or concerned.',
-      icon: '📝'
+      icon: '📝',
+      route: '/document'
     },
     {
       id: 2,
       title: 'Incident Timeline',
       description: 'Get a timeline of incidents that of you have documented.',
-      icon: '⌛'
+      icon: '⌛',
+      route: '/timeline'
     },
     {
       id: 3,
       title: 'Next Steps',
       description: 'Get personalized guidance on how to proceed with your situation.',
-      icon: '🛤️'
+      icon: '🛤️',
+      route: '/nextsteps'
     },
     {
       id: 4,
       title: 'Resources',
       description: 'Access helpful articles, contacts, and support networks.',
-      icon: '📚'
+      icon: '📚',
+      route: '/resource'
     }
   ];
 
   const renderFeatureCard = (feature) => (
+
     <TouchableOpacity
-      key={feature.id}
+      // key={feature.id
       style={[
         styles.featureCard,
         activeFeature === feature.id && styles.activeFeatureCard
       ]}
-      onPress={() => setActiveFeature(feature.id)}
+      onPress={() => {setActiveFeature(feature.id);
+        router.push(feature.route); // Navigate to the feature's route
+      }}
     >
       <Text style={styles.featureIcon}>{feature.icon}</Text>
       <Text style={styles.featureTitle}>{feature.title}</Text>
     </TouchableOpacity>
   );
 
-  const renderFeatureDetails = () => {
-    if (!activeFeature) return null;
-    
-    const feature = features.find(f => f.id === activeFeature);
-    return (
-      <View style={styles.featureDetailContainer}>
-        <Text style={styles.featureDetailTitle}>{feature.title}</Text>
-        <Text style={styles.featureDetailDescription}>{feature.description}</Text>
-        <TouchableOpacity 
-          style={styles.startButton}
-          onPress={() => console.log(`Navigate to ${feature.title}`)}
-        >
-          <Text style={styles.startButtonText}>Get Started</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -95,8 +87,6 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.featuresContainer}>
               {features.map(renderFeatureCard)}
             </View>
-            
-            {renderFeatureDetails()}
           </ScrollView>
         </View>
       </ImageBackground>
@@ -169,11 +159,8 @@ const styles = StyleSheet.create({
     padding: 35,
     alignItems: 'center',
     marginBottom: 45,
-    elevation: 2,
-    shadowColor: '#9C27B0',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    // elevation: 2,
+    // shadowColor: '#9C27B0',
   },
   activeFeatureCard: {
     backgroundColor: 'rgba(179, 157, 219, 0.7)',
@@ -220,4 +207,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  
 });
