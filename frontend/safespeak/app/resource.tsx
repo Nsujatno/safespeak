@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 const resources = [
+ 
   {
     title: 'Emergency & Crisis Support',
     items: [
@@ -70,6 +71,9 @@ export default function ResourceScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <Text style={styles.backButtonText}>← Back to Home</Text>
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerTitle}>Support Resources</Text>
@@ -101,6 +105,14 @@ export default function ResourceScreen() {
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#5C6BC0',
+  },
   container: {
     flex: 1,
     backgroundColor: '#F9F5FF',

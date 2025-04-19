@@ -57,6 +57,9 @@ export default function DocumentIncidentScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <Text style={styles.backButtonText}>← Back to Home</Text>
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerTitle}>Document an Incident</Text>
@@ -149,6 +152,14 @@ export default function DocumentIncidentScreen() {
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#5C6BC0',
+  },
   container: {
     flex: 1,
     backgroundColor: '#F9F5FF',
