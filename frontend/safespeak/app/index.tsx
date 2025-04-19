@@ -1,147 +1,105 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  Switch,
-  Alert
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  ScrollView, 
+  TouchableOpacity, 
+  StatusBar,
+  ImageBackground,
+  Platform
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 
-export default function DocumentIncidentScreen() {
-  const router = useRouter();
-
-  const [incidentDate, setIncidentDate] = useState<string>('');
-  const [incidentDescription, setIncidentDescription] = useState<string>('');
-  const [emotions, setEmotions] = useState<string[]>([]);
-  const [isSaveAnonymously, setIsSaveAnonymously] = useState<boolean>(false);
-
-  const emotionOptions: string[] = [
-    'Confused', 'Hurt', 'Angry', 'Anxious',
-    'Sad', 'Scared', 'Belittled', 'Embarrassed',
-    'Guilty', 'Manipulated', 'Gaslighted'
+export default function HomeScreen({ navigation }) {
+  const [activeFeature, setActiveFeature] = useState(null);
+  
+  const features = [
+    {
+      id: 1,
+      title: 'Document Incidents',
+      description: 'Safely record and store interactions that made you uncomfortable or concerned.',
+      icon: '📝'
+    },
+    {
+      id: 2,
+      title: 'Incident Timeline',
+      description: 'Get a timeline of incidents that of you have documented.',
+      icon: '⌛'
+    },
+    {
+      id: 3,
+      title: 'Next Steps',
+      description: 'Get personalized guidance on how to proceed with your situation.',
+      icon: '🛤️'
+    },
+    {
+      id: 4,
+      title: 'Resources',
+      description: 'Access helpful articles, contacts, and support networks.',
+      icon: '📚'
+    }
   ];
 
-  const toggleEmotion = (emotion: string) => {
-    if (emotions.includes(emotion)) {
-      setEmotions(emotions.filter(item => item !== emotion));
-    } else {
-      setEmotions([...emotions, emotion]);
-    }
-  };
+  const renderFeatureCard = (feature) => (
+    <TouchableOpacity
+      key={feature.id}
+      style={[
+        styles.featureCard,
+        activeFeature === feature.id && styles.activeFeatureCard
+      ]}
+      onPress={() => setActiveFeature(feature.id)}
+    >
+      <Text style={styles.featureIcon}>{feature.icon}</Text>
+      <Text style={styles.featureTitle}>{feature.title}</Text>
+    </TouchableOpacity>
+  );
 
-  const handleSave = () => {
-    if (!incidentDate || !incidentDescription) {
-      Alert.alert('Missing information', 'Please provide both date and description');
-      return;
-    }
-
-    // Simulate saving
-    console.log('Saving incident:', {
-      date: incidentDate,
-      description: incidentDescription,
-      emotions,
-      anonymous: isSaveAnonymously
-    });
-
-    Alert.alert(
-      'Incident Documented',
-      'Your experience has been safely recorded.',
-      [{ text: 'OK', onPress: () => router.push('/') }]
+  const renderFeatureDetails = () => {
+    if (!activeFeature) return null;
+    
+    const feature = features.find(f => f.id === activeFeature);
+    return (
+      <View style={styles.featureDetailContainer}>
+        <Text style={styles.featureDetailTitle}>{feature.title}</Text>
+        <Text style={styles.featureDetailDescription}>{feature.description}</Text>
+        <TouchableOpacity 
+          style={styles.startButton}
+          onPress={() => console.log(`Navigate to ${feature.title}`)}
+        >
+          <Text style={styles.startButtonText}>Get Started</Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>Document an Incident</Text>
-          <Text style={styles.headerSubtitle}>
-            Record what happened in a safe space. This information is private to you.
-          </Text>
-        </View>
-
-        <View style={styles.formSection}>
-          <Text style={styles.label}>When did this happen?</Text>
-          <TextInput
-            style={styles.dateInput}
-            placeholder="MM/DD/YYYY or approximate date"
-            value={incidentDate}
-            onChangeText={setIncidentDate}
-          />
-
-          <Text style={styles.label}>What happened?</Text>
-          <TextInput
-            style={styles.descriptionInput}
-            placeholder="Tell us what happened while describing your relationship with the person, where it happened, and if it's the first time. Take your time."
-            value={incidentDescription}
-            onChangeText={setIncidentDescription}
-            multiline
-            numberOfLines={8}
-            textAlignVertical="top"
-          />
-
-          <Text style={styles.label}>How did this make you feel?</Text>
-          <Text style={styles.helperText}>Select all that apply</Text>
-
-          <View style={styles.emotionsContainer}>
-            {emotionOptions.map((emotion) => (
-              <TouchableOpacity
-                key={emotion}
-                style={[
-                  styles.emotionChip,
-                  emotions.includes(emotion) && styles.emotionChipSelected
-                ]}
-                onPress={() => toggleEmotion(emotion)}
-              >
-                <Text
-                  style={[
-                    styles.emotionChipText,
-                    emotions.includes(emotion) && styles.emotionChipTextSelected
-                  ]}
-                >
-                  {emotion}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <View style={styles.privacySection}>
-            <View style={styles.switchContainer}>
-              <Text style={styles.switchLabel}>Save anonymously in system</Text>
-              <Switch
-                value={isSaveAnonymously}
-                onValueChange={setIsSaveAnonymously}
-                trackColor={{ false: '#D1C4E9', true: '#9575CD' }}
-                thumbColor={isSaveAnonymously ? '#7E57C2' : '#f4f3f4'}
-              />
+      <StatusBar barStyle="dark-content" />
+      <ImageBackground
+      source={{ uri: 'https://media.istockphoto.com/id/1285656386/photo/pastel-colored-romantic-sky-panoramic.jpg?s=612x612&w=0&k=20&c=z9gFDxZ6aye7pVWWHmcsRVh0abFlhLt-oElF0Mo54tY=' }}
+      style={styles.backgroundImage}
+      >
+        <View style={styles.overlay}>
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            <View style={styles.headerContainer}>
+              <Text style={styles.welcomeText}>Welcome to</Text>
+              <Text style={styles.logoText}>SafeSpeak</Text>
+              <Text style={styles.tagline}>
+              You’re in a space where your story matters—at your pace, in your words
+              </Text>
             </View>
-            <Text style={styles.privacyNote}>
-              Your information is always kept confidential. Anonymous incidents may be used to identify patterns without identifying details.
-            </Text>
-          </View>
+            
+            <Text style={styles.sectionTitle}>How can we help you today?</Text>
+            
+            <View style={styles.featuresContainer}>
+              {features.map(renderFeatureCard)}
+            </View>
+            
+            {renderFeatureDetails()}
+          </ScrollView>
         </View>
-
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            style={styles.saveButton}
-            onPress={handleSave}
-          >
-            <Text style={styles.saveButtonText}>Save Incident</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => router.back()}
-          >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+      </ImageBackground>
     </SafeAreaView>
   );
 }
@@ -149,132 +107,117 @@ export default function DocumentIncidentScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9F5FF',
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
   scrollContent: {
+    flexGrow: 1,
     padding: 20,
   },
   headerContainer: {
-    marginBottom: 25,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#5C6BC0',
-    marginBottom: 8,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#7986CB',
-    lineHeight: 22,
-  },
-  formSection: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#5E35B1',
-    marginBottom: 8,
-    marginTop: 16,
-  },
-  helperText: {
-    fontSize: 14,
-    color: '#9575CD',
-    marginBottom: 8,
-    fontStyle: 'italic',
-  },
-  dateInput: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 15,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#D1C4E9',
-  },
-  descriptionInput: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 15,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#D1C4E9',
-    height: 200,
-  },
-  emotionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 10,
-  },
-  emotionChip: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    marginRight: 10,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#D1C4E9',
-  },
-  emotionChipSelected: {
-    backgroundColor: '#7E57C2',
-  },
-  emotionChipText: {
-    color: '#5E35B1',
-    fontSize: 14,
-  },
-  emotionChipTextSelected: {
-    color: 'white',
-  },
-  privacySection: {
-    marginTop: 25,
-    backgroundColor: 'rgba(209, 196, 233, 0.2)',
-    borderRadius: 10,
-    padding: 15,
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
-  },
-  switchLabel: {
-    fontSize: 16,
-    color: '#5E35B1',
-    flex: 1,
-  },
-  privacyNote: {
-    fontSize: 14,
-    color: '#7E57C2',
-    lineHeight: 20,
-  },
-  buttonsContainer: {
-    marginTop: 30,
+    marginTop: 20,
     marginBottom: 40,
   },
-  saveButton: {
-    backgroundColor: '#7E57C2',
-    borderRadius: 25,
-    paddingVertical: 15,
-    alignItems: 'center',
-    marginBottom: 15,
+  welcomeText: {
+    fontSize: 24,
+    color: '#7986CB',
   },
-  saveButtonText: {
-    color: 'white',
+  logoText: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: '#5C6BC0',
+    marginBottom: 10,
+  },
+  tagline: {
+    fontSize: 16,
+    color: '#7986CB',
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  messageContainer: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(179, 157, 219, 0.0)',
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    textAlign: 'center',
     fontSize: 18,
     fontWeight: '600',
+    color: '#5E35B1',
+    marginTop: 50,
+    marginBottom: 50,
   },
-  cancelButton: {
-    backgroundColor: 'transparent',
-    borderRadius: 25,
-    paddingVertical: 15,
+  featuresContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-evenly',
+    marginBottom: 25,
+  },
+  featureCard: {
+    width: '40%',
+    backgroundColor: 'rgba(209, 196, 233, 0.5)',
+    borderRadius: 12,
+    padding: 35,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#B39DDB',
+    marginBottom: 45,
+    elevation: 2,
+    shadowColor: '#9C27B0',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-  cancelButtonText: {
-    color: '#7E57C2',
-    fontSize: 18,
+  activeFeatureCard: {
+    backgroundColor: 'rgba(179, 157, 219, 0.7)',
+    borderWidth: 1,
+    borderColor: '#7E57C2',
+  },
+  featureIcon: {
+    fontSize: 28,
+    marginBottom: 10,
+  },
+  featureTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#4527A0',
+    textAlign: 'center',
+  },
+  featureDetailContainer: {
+    backgroundColor: 'rgba(209, 196, 233, 0.3)',
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 30,
+  },
+  featureDetailTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#4527A0',
+    marginBottom: 10,
+  },
+  featureDetailDescription: {
+    fontSize: 16,
+    color: '#512DA8',
+    lineHeight: 24,
+    marginBottom: 20,
+  },
+  startButton: {
+    backgroundColor: '#7E57C2',
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    alignSelf: 'center',
+  },
+  startButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
-
