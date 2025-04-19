@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const resources = [
+ 
   {
     title: 'Emergency & Crisis Support',
     icon: 'alert-circle-outline',
@@ -113,6 +114,14 @@ export default function ResourceScreen() {
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#5C6BC0',
+  },
   container: {
     flex: 1,
     backgroundColor: '#F9F5FF',
