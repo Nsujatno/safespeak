@@ -4,13 +4,14 @@ require('dotenv').config();
 require('./db')
 const cors = require('cors');
 
-const articleRouter = require('./routes/article')
+const incidentRouter = require('./routes/incident')
 const app = express()
 
 const PORT = process.env.PORT || 8000
 app.use(cors());
 app.use(express.json())
-app.use('/api/article', articleRouter);
+app.use('/api/incident', incidentRouter);
+app.use('/api', require('./routes/ai'));
 
 app.listen(PORT, () => {
     console.log(`App is running on port ${PORT}`)
