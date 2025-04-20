@@ -17,6 +17,10 @@ const combinedSeverityScore = 72;
 export default function NextSteps() {
   const router = useRouter();
 
+  const handleBack = () => {
+    router.push('/'); // Navigate back to the home screen
+  }
+
   let recommendation = '';
   let initialSteps: string[] = [];
 
@@ -100,7 +104,7 @@ export default function NextSteps() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
         <Ionicons name="arrow-back" size={24} color="#5C6BC0" />
         <Text style={styles.backButtonText}>Back</Text>
       </TouchableOpacity>
