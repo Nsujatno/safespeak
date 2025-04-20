@@ -84,6 +84,7 @@ export default function DocumentIncidentScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerTitle}>Document an Incident</Text>
+        
           <Text style={styles.headerSubtitle}>
             Record what happened in a safe space. This information is private to you.
           </Text>

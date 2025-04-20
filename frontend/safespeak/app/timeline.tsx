@@ -124,9 +124,9 @@ export default function IncidentTimelineScreen() {
           <Text style={styles.emptyText}>
             You haven't documented any incidents yet.
           </Text>
-          <View style={styles.createButtonContainer}>
+          <TouchableOpacity style={styles.createButtonContainer} onPress={() => router.push('/document')}>
             <Text style={styles.createButtonText}>Document an Incident</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       )}
     </SafeAreaView>
