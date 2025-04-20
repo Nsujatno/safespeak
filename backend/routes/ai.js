@@ -4,33 +4,6 @@ const mongoose = require("mongoose");
 const axios = require('axios');
 
 const TOXICBERT_API_URL = 'https://api-inference.huggingface.co/models/unitary/toxic-bert';
-// const FACEBOOK_API_URL = 'https://api-inference.huggingface.co/models/facebook/bart-large-cnn';
-
-// router.post('/facebook/analyze', async (req, res) => {
-//     const { text } = req.body;
-  
-//     try {
-//         const response = await axios.post(
-//             FACEBOOK_API_URL,
-//             {
-//               inputs: {
-//                 text: text,
-//                 question: "What are some practical steps I can take to protect myself from emotional abuse?",
-//               }
-//             },
-
-//             {
-//             headers: {
-//             Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-//             },
-//             }
-//         );
-//         res.json({ result: response.data.answer });
-//     } catch (error) {
-//       console.error(error.response?.data || error.message);
-//       res.status(500).json({ error: 'Hugging Face API call failed' });
-//     }
-// });
 
 router.post('/toxicbert/analyze', async (req, res) => {
     const { text, time, feelings } = req.body;
@@ -73,7 +46,7 @@ router.post('/toxicbert/analyze', async (req, res) => {
           { word: 'kill', weight: 0.3 },
           { word: 'threat', weight: 0.15 },
           { word: 'abuse', weight: 0.2 },
-          { word: 'hit', weight: 0.15 },
+          { word: 'hit', weight: 0.2 },
           { word: 'beat', weight: 0.2 },
           { word: 'punch', weight: 0.15 },
           { word: 'attack', weight: 0.15 },
@@ -176,8 +149,8 @@ router.post('/toxicbert/analyze', async (req, res) => {
 
   function extractContextFromText(text) {
     const relationshipKeywords = ['ex boyfriend', 'ex girlfriend', 'boyfriend', 'girlfriend', 'spouse', 'parent', 'friend', 'ex'];
-    const locationKeywords = ['home', 'work', 'school', 'park', 'public'];
-    const repeatBehaviorKeywords = ['several occurrences', 'multiple times', 'repeatedly', 'often', 'several times', 'not the first time'];
+    const locationKeywords = ['home', 'work', 'school', 'park', 'public', 'apartment'];
+    const repeatBehaviorKeywords = ['several occurrences', 'multiple times', 'repeatedly', 'often', 'several times', 'not the first time', 'repeated', "wasn't the first time", 'has happened before'];
 
     const relationship = relationshipKeywords.find((keyword) => text.toLowerCase().includes(keyword)) || 'Unknown';
     const location = locationKeywords.find((keyword) => text.toLowerCase().includes(keyword)) || 'Not specified';
