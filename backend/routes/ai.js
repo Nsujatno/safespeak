@@ -144,6 +144,10 @@ router.post('/toxicbert/analyze', async (req, res) => {
     } catch (error) {
       console.error(error.response?.data || error.message);
       res.status(500).json({ error: 'Hugging Face API call failed' });
+
+      if(error.response && error.response.status === 503) {
+        return res.status(503).json({ error: 'Hugging Face service is unavailable. Please try again later.' });
+      }
     }
   });
 
