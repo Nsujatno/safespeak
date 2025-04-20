@@ -36,18 +36,19 @@ export default function DocumentIncidentScreen() {
     }
   }
 
-  const [incidentDate, setIncidentDate] = useState<string>('');
-  const [incidentDescription, setIncidentDescription] = useState<string>('');
-  const [emotions, setEmotions] = useState<string[]>([]);
-  const [isSaveAnonymously, setIsSaveAnonymously] = useState<boolean>(false);
+  const [incidentDate, setIncidentDate] = useState('');
+  const [incidentDescription, setIncidentDescription] = useState('');
+  const [emotions, setEmotions] = useState([]);
+  const [isSaveAnonymously, setIsSaveAnonymously] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
-  const emotionOptions: string[] = [
+  const emotionOptions = [
     'Confused', 'Hurt', 'Angry', 'Anxious',
     'Sad', 'Scared', 'Belittled', 'Embarrassed',
     'Guilty', 'Manipulated', 'Gaslighted'
   ];
 
-  const toggleEmotion = (emotion: string) => {
+  const toggleEmotion = (emotion) => {
     if (emotions.includes(emotion)) {
       setEmotions(emotions.filter(item => item !== emotion));
     } else {
@@ -56,29 +57,52 @@ export default function DocumentIncidentScreen() {
   };
 
   const handleSave = () => {
+    // Input validation
     if (!incidentDate || !incidentDescription) {
       Alert.alert('Missing information', 'Please provide both date and description');
       return;
     }
-
-    // Simulate saving
+    
+    // Prevent multiple navigation attempts
+    if (isNavigating) return;
+    
+    setIsNavigating(true);
+    
+    // Simulate saving data
     console.log('Saving incident:', {
       date: incidentDate,
       description: incidentDescription,
       emotions,
       anonymous: isSaveAnonymously
     });
-
-    Alert.alert(
-      'Incident Documented',
-      'Your experience has been safely recorded.',
-      [{ text: 'OK', onPress: () => router.push('/') }]
-    );
+    
+    // Navigate to next steps page
+    try {
+      router.push('/steps');
+    } catch (error) {
+      console.error('Navigation error:', error);
+      // If navigation fails, try an alternative approach
+      setTimeout(() => {
+        try {
+          router.replace('/steps');
+        } catch (secondError) {
+          console.error('Second navigation attempt failed:', secondError);
+          Alert.alert(
+            'Navigation Error',
+            'Could not navigate to next steps. Please try again.',
+            [{ text: 'OK', onPress: () => setIsNavigating(false) }]
+          );
+        }
+      }, 100);
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+      <TouchableOpacity 
+        style={styles.backButton} 
+        onPress={() => router.back()}
+      >
         <Text style={styles.backButtonText}>← Back to Home</Text>
       </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -154,16 +178,22 @@ export default function DocumentIncidentScreen() {
         </View>
 
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity
+          <TouchableOpacity 
             style={styles.saveButton}
             onPress={handleSubmit}
+            activeOpacity={0.7}
+            disabled={isNavigating}
           >
-            <Text style={styles.saveButtonText}>Save Incident</Text>
+            <Text style={styles.saveButtonText}>
+              {isNavigating ? 'Saving...' : 'Save Incident'}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.cancelButton}
             onPress={() => router.back()}
+            activeOpacity={0.7}
+            disabled={isNavigating}
           >
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
@@ -216,7 +246,6 @@ const styles = StyleSheet.create({
   helperText: {
     fontSize: 14,
     color: '#9575CD',
-
     marginBottom: 8,
     fontStyle: 'italic',
   },
@@ -307,9 +336,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#B39DDB',
+    marginBottom: 15,
   },
   cancelButtonText: {
     color: '#7E57C2',
     fontSize: 18,
   },
+  // Add style for disabled button
+  saveButtonDisabled: {
+    backgroundColor: '#B39DDB',
+    opacity: 0.7,
+  }
 });
