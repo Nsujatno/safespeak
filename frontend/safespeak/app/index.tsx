@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -46,48 +47,64 @@ export default function HomeScreen() {
     {
       id: 1,
       title: 'Document Incidents',
-      description:
-        'Safely record and store interactions that made you uncomfortable or concerned.',
-      icon: '📝',
-      route: '/document',
+      description: 'Safely record and store interactions that made you uncomfortable or concerned.',
+      icon: 'file-document-outline',
+      route: '/document'
     },
     {
       id: 2,
       title: 'Incident Timeline',
-      description: 'Get a timeline of incidents that you have documented.',
-      icon: '⌛',
-      route: '/timeline',
+      description: 'Get a timeline of incidents that of you have documented.',
+      icon: 'history',
+      route: '/timeline'
     },
     {
       id: 3,
       title: 'Next Steps',
-      description:
-        'Get personalized guidance on how to proceed with your situation.',
-      icon: '🛤️',
-      route: '/steps',
+      description: 'Get personalized guidance on how to proceed with your situation.',
+      icon: 'arrow-decision-outline',
+      route: '/steps'
     },
     {
       id: 4,
       title: 'Resources',
       description: 'Access helpful articles, contacts, and support networks.',
-      icon: '📚',
-      route: '/resource',
-    },
+      icon: 'book-open-variant',
+      route: '/resource'
+    }
   ];
 
-  const renderFeatureCard = (feature) => (
-    <TouchableOpacity
-      key={feature.id}
-      style={[styles.featureCard, activeFeature === feature.id]}
-      onPress={() => {
-        setActiveFeature(feature.id);
-        router.push(feature.route);
-      }}
-    >
-      <Text style={styles.featureIcon}>{feature.icon}</Text>
-      <Text style={styles.featureTitle}>{feature.title}</Text>
-    </TouchableOpacity>
-  );
+  const renderFeatureCard = (feature) => {
+    const isHovered = activeFeature === feature.id && Platform.OS === 'web';
+    const textColor = isHovered ? '#311B92' : '#4527A0'; 
+  
+    return (
+      <TouchableOpacity
+        key={feature.id}
+        style={[
+          styles.featureCard,
+          isHovered && styles.hoveredFeatureCard,
+        ]}
+        onPress={() => {
+          setActiveFeature(feature.id);
+          router.push(feature.route);
+        }}
+        onMouseEnter={() => Platform.OS === 'web' && setActiveFeature(feature.id)} // Set hover state
+        onMouseLeave={() => Platform.OS === 'web' && setActiveFeature(null)}
+      >
+        <MaterialCommunityIcons 
+          name={feature.icon} 
+          size={32} 
+          color={textColor} 
+          style={styles.featureIcon} 
+        />
+        <Text style={[
+          styles.featureTitle,
+          { color: textColor }
+        ]}>{feature.title}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -167,6 +184,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 24,
+    fontFamily: 'Sans',
     color: '#7986CB',
   },
   logoText: {
@@ -178,6 +196,7 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontSize: 16,
+    fontFamily: 'Sans',
     color: '#7986CB',
     textAlign: 'center',
     fontStyle: 'italic',
@@ -185,6 +204,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     textAlign: 'center',
     fontSize: 18,
+    fontFamily: 'Sans',
     fontWeight: '600',
     color: '#5E35B1',
     marginTop: 10,
@@ -227,6 +247,7 @@ const styles = StyleSheet.create({
   },
   featureTitle: {
     fontSize: 16,
+    fontFamily: 'Sans',
     fontWeight: '500',
     color: '#4527A0',
     textAlign: 'center',
