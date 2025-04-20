@@ -8,26 +8,28 @@ const incidentSchema = new mongoose.Schema({
     description: String,
     timestamp: Date,
     relationship: String,
-    emotionalState: String,
+    emotionalState: [String],
     repeatBehavior: Boolean,
     severityScore: Number,
     recommendation: String,
+    location: String,
 });
 
 const Incidents = mongoose.model("Incidents", incidentSchema);
 
 router.post("/send", async (req, res) => {
-    const { name, description, relationship, emotionalState, repeatBehavior, severityScore, recommendation } = req.body;
+    const { name, description, timestamp, relationship, emotionalState, repeatBehavior, severityScore, recommendation, location } = req.body;
     try {
         const newIncident = new Incidents({
             name,
             description,
-            timestamp: new Date(), // Set the timestamp to the current date
+            timestamp,
             relationship,
             emotionalState,
             repeatBehavior,
             severityScore,
             recommendation,
+            location,
         });
         await newIncident.save();
         res.status(200).json({ message: "Incident saved successfully" });

@@ -11,9 +11,30 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import axios from 'axios';
 
 export default function DocumentIncidentScreen() {
   const router = useRouter();
+
+  const handleSubmit = async () => {
+    console.log(incidentDescription, incidentDate, emotions);
+    try{
+      const response = await axios.post('http://localhost:8000/api/toxicbert/analyze', {
+        text: incidentDescription,
+        time: incidentDate,
+        feelings: emotions,
+      })
+      // console.log('Response from server:', response.data);
+      // console.log("Severity score:", response.data.combinedSeverityScore);
+      router.push({
+        pathname: '/steps',
+        params: { severityScore: response.data.combinedSeverityScore },
+      });
+    }catch (error) {
+      console.error('Error submitting incident:', error);
+      Alert.alert('Error', 'There was an error submitting your incident. Please try again later.');
+    }
+  }
 
   const [incidentDate, setIncidentDate] = useState('');
   const [incidentDescription, setIncidentDescription] = useState('');
@@ -87,6 +108,7 @@ export default function DocumentIncidentScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerTitle}>Document an Incident</Text>
+        
           <Text style={styles.headerSubtitle}>
             Record what happened in a safe space. This information is private to you.
           </Text>
@@ -158,7 +180,7 @@ export default function DocumentIncidentScreen() {
         <View style={styles.buttonsContainer}>
           <TouchableOpacity 
             style={styles.saveButton}
-            onPress={handleSave}
+            onPress={handleSubmit}
             activeOpacity={0.7}
             disabled={isNavigating}
           >
