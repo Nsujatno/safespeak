@@ -53,7 +53,7 @@ export default function HomeScreen() {
       // key={feature.id
       style={[
         styles.featureCard,
-        activeFeature === feature.id && styles.activeFeatureCard
+        activeFeature === feature.id
       ]}
       onPress={() => {setActiveFeature(feature.id);
         router.push(feature.route); // Navigate to the feature's route
@@ -120,9 +120,10 @@ const styles = StyleSheet.create({
     color: '#7986CB',
   },
   logoText: {
-    fontSize: 48,
-    fontWeight: 'bold',
+    fontSize: 60,
+    fontFamily: 'Round',
     color: '#5C6BC0',
+    marginTop: 10,
     marginBottom: 10,
   },
   tagline: {
@@ -162,11 +163,7 @@ const styles = StyleSheet.create({
     // elevation: 2,
     // shadowColor: '#9C27B0',
   },
-  activeFeatureCard: {
-    backgroundColor: 'rgba(179, 157, 219, 0.7)',
-    borderWidth: 1,
-    borderColor: '#7E57C2',
-  },
+  
   featureIcon: {
     fontSize: 28,
     marginBottom: 10,
