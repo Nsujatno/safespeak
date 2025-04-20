@@ -8,14 +8,17 @@ import {
   Animated
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 // Mock severity score for testing
-const combinedSeverityScore = 72;
+
 
 export default function NextSteps() {
   const router = useRouter();
+  const { severityScore } = useLocalSearchParams();
+  const combinedSeverityScore = Number(severityScore);
+  // console.log("serverity score:" + combinedSeverityScore);
 
   let recommendation = '';
   let initialSteps: string[] = [];

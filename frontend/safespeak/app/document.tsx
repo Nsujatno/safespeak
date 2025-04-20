@@ -24,7 +24,12 @@ export default function DocumentIncidentScreen() {
         time: incidentDate,
         feelings: emotions,
       })
-      
+      // console.log('Response from server:', response.data);
+      // console.log("Severity score:", response.data.combinedSeverityScore);
+      router.push({
+        pathname: '/steps',
+        params: { severityScore: response.data.combinedSeverityScore },
+      });
     }catch (error) {
       console.error('Error submitting incident:', error);
       Alert.alert('Error', 'There was an error submitting your incident. Please try again later.');
