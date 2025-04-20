@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    'Round': require('../assets/fonts/HeilyroundedExtruderightDemo-PVLp2.otf')
-    ,
+    'Round': require('../assets/fonts/HeilyroundedExtruderightDemo-PVLp2.otf'),
+    'Sans': require('../assets/fonts/BrandinkSansLight.otf'),
   });
 
   useEffect(() => {
