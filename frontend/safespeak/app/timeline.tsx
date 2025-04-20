@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   StyleSheet, 
   Text, 
@@ -8,36 +8,70 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import axios from 'axios';
+
+interface Incident {
+  id: string;
+  date: string;
+  description: string;
+  emotions: string[];
+}
 
 export default function IncidentTimelineScreen() {
   const router = useRouter();
 
-  const [incidents, setIncidents] = useState([
-    {
-      id: '1',
-      date: '2025-04-10',
-      description: 'Argument where I was called names and blamed for things I didn\'t do',
-      emotions: ['Hurt', 'Confused', 'Angry']
-    },
-    {
-      id: '2',
-      date: '2025-03-25',
-      description: 'Was told my memory of events was wrong when I brought up a past incident',
-      emotions: ['Gaslighted', 'Anxious', 'Confused']
-    },
-    {
-      id: '3',
-      date: '2025-03-12',
-      description: 'Silent treatment after I expressed concerns about our relationship',
-      emotions: ['Sad', 'Anxious', 'Guilty']
-    },
-    {
-      id: '4',
-      date: '2025-02-28',
-      description: 'Public humiliation at dinner with friends',
-      emotions: ['Embarrassed', 'Belittled', 'Angry']
-    },
-  ]);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const incidentArr: Incident[] = [];
+  // const [incidents, setIncidents] = useState([
+  //   {
+  //     id: '1',
+  //     date: '2025-04-10',
+  //     description: 'Argument where I was called names and blamed for things I didn\'t do',
+  //     emotions: ['Hurt', 'Confused', 'Angry']
+  //   },
+  //   {
+  //     id: '2',
+  //     date: '2025-03-25',
+  //     description: 'Was told my memory of events was wrong when I brought up a past incident',
+  //     emotions: ['Gaslighted', 'Anxious', 'Confused']
+  //   },
+  //   {
+  //     id: '3',
+  //     date: '2025-03-12',
+  //     description: 'Silent treatment after I expressed concerns about our relationship',
+  //     emotions: ['Sad', 'Anxious', 'Guilty']
+  //   },
+  //   {
+  //     id: '4',
+  //     date: '2025-02-28',
+  //     description: 'Public humiliation at dinner with friends',
+  //     emotions: ['Embarrassed', 'Belittled', 'Angry']
+  //   },
+  // ]);
+
+  useEffect(() => {
+    const fetchIncidents = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/incident/get');
+        for(let i = 0; i < response.data.length; i++){
+          const transformedIncident = {
+            id: response.data[i]._id,
+            date: response.data[i].timestamp,
+            description: response.data[i].description,
+            emotions: response.data[i].emotionalState,
+          };
+          incidentArr.push(transformedIncident);
+          // console.log(transformedIncident);
+        }
+        // console.log(response.data);
+        setIncidents(incidentArr);
+      } catch (error) {
+        console.error('Error fetching incidents:', error);
+      }
+    }
+
+    fetchIncidents();
+  }, []);
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };

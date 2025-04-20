@@ -11,9 +11,25 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import axios from 'axios';
 
 export default function DocumentIncidentScreen() {
   const router = useRouter();
+
+  const handleSubmit = async () => {
+    console.log(incidentDescription, incidentDate, emotions);
+    try{
+      const response = await axios.post('http://localhost:8000/api/toxicbert/analyze', {
+        text: incidentDescription,
+        time: incidentDate,
+        feelings: emotions,
+      })
+      
+    }catch (error) {
+      console.error('Error submitting incident:', error);
+      Alert.alert('Error', 'There was an error submitting your incident. Please try again later.');
+    }
+  }
 
   const [incidentDate, setIncidentDate] = useState<string>('');
   const [incidentDescription, setIncidentDescription] = useState<string>('');
@@ -134,7 +150,7 @@ export default function DocumentIncidentScreen() {
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={styles.saveButton}
-            onPress={handleSave}
+            onPress={handleSubmit}
           >
             <Text style={styles.saveButtonText}>Save Incident</Text>
           </TouchableOpacity>
