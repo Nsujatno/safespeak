@@ -174,14 +174,13 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   featureCard: {
-    width: '41%',
+    width: '40%',
     backgroundColor: 'rgba(209, 196, 233, 0.55)',
     borderRadius: 12,
-    padding: 35,
+    padding: 45,
     alignItems: 'center',
-    marginBottom: 70,
-    // elevation: 2,
-    // shadowColor: '#9C27B0',
+    marginBottom: 60,
+    
     ...(Platform.OS === 'web' && {
       cursor: 'pointer',
       transition: 'all 0.3s ease',

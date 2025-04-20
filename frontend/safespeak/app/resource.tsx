@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Linking,
-  Dimensions,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -18,12 +18,14 @@ const resources = [
     icon: 'alert-circle-outline',
     items: [
       {
+        id: '1-1',
         name: 'National Domestic Violence Hotline',
         info: 'Call 1-800-799-7233 or text "START" to 88788',
         url: 'https://www.thehotline.org/',
         icon: 'phone-alert',
       },
       {
+        id: '1-2',
         name: 'Crisis Text Line',
         info: 'Text HOME to 741741',
         url: 'https://www.crisistextline.org/',
@@ -36,12 +38,14 @@ const resources = [
     icon: 'account-heart-outline',
     items: [
       {
+        id: '2-1',
         name: 'BetterHelp',
         info: 'Online therapy with licensed professionals',
         url: 'https://www.betterhelp.com/',
         icon: 'account-heart',
       },
       {
+        id: '2-2',
         name: 'Psychology Today',
         info: 'Find a therapist near you',
         url: 'https://www.psychologytoday.com/',
@@ -54,12 +58,14 @@ const resources = [
     icon: 'gavel',
     items: [
       {
+        id: '3-1',
         name: 'RAINN',
         info: 'Support for survivors of sexual violence',
         url: 'https://www.rainn.org/',
         icon: 'shield-account',
       },
       {
+        id: '3-2',
         name: 'WomensLaw.org',
         info: 'Legal help tailored for survivors of abuse',
         url: 'https://www.womenslaw.org/',
@@ -71,6 +77,8 @@ const resources = [
 
 export default function ResourceScreen() {
   const router = useRouter();
+  // Add state for tracking hovered resource
+  const [hoveredResource, setHoveredResource] = useState(null);
 
   const handleOpenLink = async (url) => {
     const supported = await Linking.canOpenURL(url);
@@ -101,21 +109,44 @@ export default function ResourceScreen() {
                 <Text style={styles.sectionTitle}>{section.title}</Text>
               </View>
               
-              {section.items.map((item) => (
-                <TouchableOpacity
-                  key={item.name}
-                  style={styles.resourceCard}
-                  onPress={() => handleOpenLink(item.url)}
-                >
-                  <View style={styles.resourceCardContent}>
-                    <Icon name={item.icon} size={36} color="#5E35B1" style={styles.resourceIcon} />
-                    <View style={styles.resourceText}>
-                      <Text style={styles.resourceName}>{item.name}</Text>
-                      <Text style={styles.resourceInfo}>{item.info}</Text>
+              {section.items.map((item) => {
+                // Check if this resource is currently hovered
+                const isHovered = hoveredResource === item.id && Platform.OS === 'web';
+                // Adjust text color when hovered, similar to the index page
+                const textColor = isHovered ? '#311B92' : '#4527A0';
+                
+                return (
+                  <TouchableOpacity
+                    key={item.name}
+                    style={[
+                      styles.resourceCard,
+                      isHovered && styles.hoveredResourceCard
+                    ]}
+                    onPress={() => handleOpenLink(item.url)}
+                    onMouseEnter={() => Platform.OS === 'web' && setHoveredResource(item.id)}
+                    onMouseLeave={() => Platform.OS === 'web' && setHoveredResource(null)}
+                  >
+                    <View style={styles.resourceCardContent}>
+                      <Icon 
+                        name={item.icon} 
+                        size={36} 
+                        color={textColor} 
+                        style={styles.resourceIcon} 
+                      />
+                      <View style={styles.resourceText}>
+                        <Text style={[
+                          styles.resourceName,
+                          { color: textColor }
+                        ]}>{item.name}</Text>
+                        <Text style={[
+                          styles.resourceInfo,
+                          isHovered && { color: '#512DA8' }
+                        ]}>{item.info}</Text>
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           ))}
         </View>
@@ -192,6 +223,23 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     justifyContent: 'center',
+    
+    // Add web-specific transitions similar to index page
+    ...(Platform.OS === 'web' && {
+      cursor: 'pointer',
+      transition: 'all 0.3s ease',
+    }),
+  },
+  // Add hover style similar to index page
+  hoveredResourceCard: {
+    backgroundColor: 'rgba(230, 154, 243, 0.2)',
+    transform: [{ scale: 1.05 }],
+    elevation: 5,
+    shadowColor: '#9C27B0',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    borderColor: '#B39DDB',
   },
   resourceCardContent: {
     flexDirection: 'column',
