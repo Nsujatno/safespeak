@@ -12,12 +12,13 @@ const incidentSchema = new mongoose.Schema({
     repeatBehavior: Boolean,
     severityScore: Number,
     recommendation: String,
+    location: String,
 });
 
 const Incidents = mongoose.model("Incidents", incidentSchema);
 
 router.post("/send", async (req, res) => {
-    const { name, description, timestamp, relationship, emotionalState, repeatBehavior, severityScore, recommendation } = req.body;
+    const { name, description, timestamp, relationship, emotionalState, repeatBehavior, severityScore, recommendation, location } = req.body;
     try {
         const newIncident = new Incidents({
             name,
@@ -28,6 +29,7 @@ router.post("/send", async (req, res) => {
             repeatBehavior,
             severityScore,
             recommendation,
+            location,
         });
         await newIncident.save();
         res.status(200).json({ message: "Incident saved successfully" });

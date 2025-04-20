@@ -4,14 +4,37 @@ const mongoose = require("mongoose");
 const axios = require('axios');
 
 const TOXICBERT_API_URL = 'https://api-inference.huggingface.co/models/unitary/toxic-bert';
+// const FACEBOOK_API_URL = 'https://api-inference.huggingface.co/models/facebook/bart-large-cnn';
 
+// router.post('/facebook/analyze', async (req, res) => {
+//     const { text } = req.body;
+  
+//     try {
+//         const response = await axios.post(
+//             FACEBOOK_API_URL,
+//             {
+//               inputs: {
+//                 text: text,
+//                 question: "What are some practical steps I can take to protect myself from emotional abuse?",
+//               }
+//             },
+
+//             {
+//             headers: {
+//             Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+//             },
+//             }
+//         );
+//         res.json({ result: response.data.answer });
+//     } catch (error) {
+//       console.error(error.response?.data || error.message);
+//       res.status(500).json({ error: 'Hugging Face API call failed' });
+//     }
+// });
 
 router.post('/toxicbert/analyze', async (req, res) => {
     const { text, time, feelings } = req.body;
     const date = new Date(time);
-    if (isNaN(date.getTime())) {
-      return res.status(400).json({ error: 'Invalid time format. Use MM/DD/YYYY.' });
-    }
     let recommendation = "Keep monitoring the situation and seek help if needed.";
   
     if (!text) return res.status(400).json({ error: 'No text provided' });
@@ -31,9 +54,86 @@ router.post('/toxicbert/analyze', async (req, res) => {
             }
         );
     
-        const toxicityScores = response.data[0]?.map((item) => item.score) || [];
-        const maxToxicityScore = Math.max(...toxicityScores);
-        const toxicitySeverity = maxToxicityScore * 100;
+        const toxicityData = response.data[0] || [];
+        
+      
+        let toxicScore = 0;
+        let threatScore = 0;
+        let insultScore = 0;
+        
+        toxicityData.forEach(item => {
+            if (item.label === 'toxic') toxicScore = item.score;
+            else if (item.label === 'threat') threatScore = item.score;
+            else if (item.label === 'insult') insultScore = item.score;
+        });
+
+        const threatWords = [
+          { word: 'harm', weight: 0.2 },
+          { word: 'hurt', weight: 0.2 },
+          { word: 'kill', weight: 0.3 },
+          { word: 'threat', weight: 0.15 },
+          { word: 'abuse', weight: 0.2 },
+          { word: 'hit', weight: 0.15 },
+          { word: 'beat', weight: 0.2 },
+          { word: 'punch', weight: 0.15 },
+          { word: 'attack', weight: 0.15 },
+          { word: 'die', weight: 0.25 },
+          { word: 'weapon', weight: 0.25 },
+          { word: 'gun', weight: 0.25 },
+          { word: 'knife', weight: 0.25 },
+          { word: 'fear', weight: 0.1 },
+          { word: 'afraid', weight: 0.1 },
+          { word: 'scared', weight: 0.1 },
+          { word: 'danger', weight: 0.2 },
+          { word: 'threaten', weight: 0.25 },
+          { word: 'violence', weight: 0.3 },
+          { word: 'violently', weight: 0.3 },
+          { word: 'assault', weight: 0.25 },
+          { word: 'stalk', weight: 0.2 },
+          { word: 'stalker', weight: 0.2 },
+          { word: 'stalking', weight: 0.2 },
+          { word: 'harassed', weight: 0.2 },
+          { word: 'harass', weight: 0.2 },
+          { word: 'harassment', weight: 0.2 },
+          { word: 'harassing', weight: 0.2 },
+          { word: 'bully', weight: 0.2 },
+          { word: 'bullying', weight: 0.2 },
+          { word: 'control', weight: 0.15 },
+          { word: 'controlling', weight: 0.15 },
+          { word: 'manipulate', weight: 0.15 },
+          { word: 'manipulation', weight: 0.15 },
+          { word: 'coerce', weight: 0.2 },
+          { word: 'coercion', weight: 0.2 },
+          { word: 'force', weight: 0.2 },
+          { word: 'forced', weight: 0.2 },
+          { word: 'pressure', weight: 0.15 },
+          { word: 'pressured', weight: 0.15 },
+          { word: 'threatening', weight: 0.25 },
+          { word: 'threats', weight: 0.25 },
+      ];
+      
+      let manualThreatScore = 0;
+      const lowerText = text.toLowerCase();
+      
+      threatWords.forEach(item => {
+          if (lowerText.includes(item.word)) {
+              manualThreatScore += item.weight;
+          }
+      });
+      
+      manualThreatScore = Math.min(manualThreatScore, 0.8);
+      
+      threatScore = Math.max(threatScore, manualThreatScore);
+      
+      const weightedToxicityScore = (
+          toxicScore * 0.6 + 
+          threatScore * 5.0 + 
+          insultScore * 0.5
+      ) / 4;
+      
+      const toxicitySeverity = weightedToxicityScore * 100;
+        
+
         const repeatBehaviorSeverity = extractedContext.repeatBehavior ? 20 : 0;
         let relationshipSeverity = 0;
         if (extractedContext.relationship === 'ex boyfriend' || extractedContext.relationship === 'ex girlfriend' || extractedContext.relationship === 'ex' || extractedContext.relationship === 'spouse') {
@@ -56,11 +156,12 @@ router.post('/toxicbert/analyze', async (req, res) => {
                 name: 'Anonymous',
                 description: text,
                 timestamp: date,
-                relationship: extractedContext.relationship,
+                relationship: extractedContext.relationship || "Unknown",
                 emotionalState: feelings,
-                repeatBehavior: extractedContext.repeatBehavior,
+                repeatBehavior: extractedContext.repeatBehavior || false,
                 severityScore: combinedSeverityScore,
                 recommendation: recommendation,
+                location: extractedContext.location || "Not specified",
             });
             console.log('Incident saved successfully:', response.data);
         }catch(error){
