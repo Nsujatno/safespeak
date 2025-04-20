@@ -24,8 +24,11 @@ export default function HomeScreen() {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    
     const checkFirstLaunch = async () => {
+      
       try {
+        // await AsyncStorage.setItem('hasSeenDisclaimer', 'false');
         const hasSeenDisclaimer = await AsyncStorage.getItem('hasSeenDisclaimer');
         if (!hasSeenDisclaimer) {
           setShowModal(true);
