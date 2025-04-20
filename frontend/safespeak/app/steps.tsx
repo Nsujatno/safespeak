@@ -13,7 +13,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 // Mock severity score for testing
 
-
 export default function NextSteps() {
   const router = useRouter();
   const { severityScore } = useLocalSearchParams();
@@ -75,6 +74,7 @@ export default function NextSteps() {
 
   const animations = useRef(initialSteps.map(() => new Animated.Value(0))).current;
   const congratsOpacity = useRef(new Animated.Value(0)).current;
+  const noteOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.stagger(150, animations.map(anim =>
@@ -89,11 +89,19 @@ export default function NextSteps() {
   useEffect(() => {
     if (completedSteps.filter(Boolean).length === completedSteps.length) {
       // When all steps are completed, start fading in the "Congrats" message
-      Animated.timing(congratsOpacity, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }).start();
+      Animated.sequence([
+        Animated.timing(congratsOpacity, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(noteOpacity, {
+          toValue: 1,
+          duration: 500,
+          delay: 200,
+          useNativeDriver: true,
+        })
+      ]).start();
     }
   }, [completedSteps]); // Use completedSteps as the dependency
 
@@ -158,6 +166,9 @@ export default function NextSteps() {
           <Animated.View style={[styles.congratsContainer, { opacity: congratsOpacity }]}>
             <Ionicons name="sparkles" size={48} color="#7E57C2" />
             <Text style={styles.congratsText}>Congrats on taking the first step!</Text>
+            <Animated.Text style={[styles.resourceNote, { opacity: noteOpacity }]}>
+              For more information, seek the resource tab
+            </Animated.Text>
           </Animated.View>
         )}
       </ScrollView>
@@ -242,6 +253,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#5E35B1',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  resourceNote: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    color: '#7E57C2',
     textAlign: 'center',
   },
 });
