@@ -27,7 +27,7 @@ export default function HomeScreen() {
         const lastShown = await AsyncStorage.getItem('lastDisclaimerTime');
         const now = Date.now();
 
-        if (!lastShown || now - parseInt(lastShown) > .5 * 60 * 1000) {
+        if (!lastShown || now - parseInt(lastShown) > 5 * 60 * 1000) {
           setShowModal(true);
           await AsyncStorage.setItem('lastDisclaimerTime', now.toString());
         }

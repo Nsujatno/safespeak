@@ -32,7 +32,7 @@ export default function DocumentIncidentScreen() {
       });
     }catch (error) {
       console.error('Error submitting incident:', error);
-      Alert.alert('Error', 'There was an error submitting your incident. Please try again later.');
+      Alert.alert('Error', 'There was an error submitting your incident. Please try again.');
     }
   }
 
