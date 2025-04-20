@@ -36,7 +36,7 @@ export default function HomeScreen() {
       title: 'Next Steps',
       description: 'Get personalized guidance on how to proceed with your situation.',
       icon: '🛤️',
-      route: '/nextsteps'
+      route: '/steps'
     },
     {
       id: 4,
