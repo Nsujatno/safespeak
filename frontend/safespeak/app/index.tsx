@@ -198,11 +198,28 @@ const styles = StyleSheet.create({
   },
   featureCard: {
     width: '40%',
-    backgroundColor: 'rgba(209, 196, 233, 0.5)',
+    backgroundColor: 'rgba(209, 196, 233, 0.55)',
     borderRadius: 12,
-    padding: 35,
+    padding: 45,
     alignItems: 'center',
-    marginBottom: 45,
+    marginBottom: 60,
+    
+    ...(Platform.OS === 'web' && {
+      cursor: 'pointer',
+      transition: 'all 0.3s ease',
+    }),
+  },
+  hoveredFeatureCard: {
+    backgroundColor: 'rgba(230, 154, 243, 0.6)',
+    transform: [{ scale: 1.05 }],
+    elevation: 5,
+    shadowColor: '#9C27B0',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  activeFeatureCard: {
+    backgroundColor: 'rgba(230, 154, 243, 0.6)',
   },
   featureIcon: {
     fontSize: 28,
